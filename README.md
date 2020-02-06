@@ -1,7 +1,7 @@
 # Polidog/HypermediaBundle
 
 HypermediaAPI bundle.
-This bundle support only HAL json. And You mast need [polidog/simple-api-bundle](https://packagist.org/packages/polidog/simple-api-bundle)
+This bundle support only HAL json. And you mast need [polidog/simple-api-bundle](https://packagist.org/packages/polidog/simple-api-bundle)
 
 ## Installation
 
@@ -41,46 +41,50 @@ If `hal_content_type` is true that need request header for `application/hal+json
 
 declare(strict_types=1);
 
-namespace App\Controller\Api;
+namespace App\Controller\Api\Projects;
 
-use App\Entity\LoginUser;
+use App\Repository\ProjectRepository;
+use Polidog\HypermediaBundle\Annotations\Embed;
+use Polidog\HypermediaBundle\Annotations\Link;
 use Polidog\SimpleApiBundle\Annotations\Api;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Polidog\HyperMediaBundle\Annotations\Embed;
-use Polidog\HyperMediaBundle\Annotations\Link;
 
-class UserController
+/**
+ * @Route("/projects/{code}/detail", requirements={"code"})
+ * @Api(statusCode=200)
+ *
+ * @Embed(rel="members", src="/api/projects/{code}/members")
+ *
+ * @Link(rel="projects", href="/projects")
+ * @Link(rel="project-new", href="/projects/new")
+ *
+ */
+class DetailController
 {
-    private $userRepository;
-
     /**
-     * @Route("/user/{id}")
-     * @Api()
-     * @Link(rel="project", href="/project")
-     * @Embed()  
+     * @var ProjectRepository
      */
-    public function me($id): array
+    private $repository;
+
+    public function __construct(ProjectRepository $repository)
     {
-        $user = $this->userRepository->find($id);
-        return [
-            'id' => $user->getId(),
-            'name' => $user->getUsername(),
-            'avatar' => $user->getAvatar(),
-        ];
+        $this->repository = $repository;
     }
 
     /**
-     * @Route("/user/post", methods={"POST"})
-     * @Api(statusCode=201)
+     * @return array<string,array|null>
      */
-    public function post(Request $request): array
+    public function __invoke(string $code): array
     {
-        // TODO save logic.
+        $project = $this->repository->findProjectCode($code);
+
         return [
-            'status' => 'ok',
+            'project' => null !== $project ? $project->export() : null,
         ];
     }
 }
-
 ```
+
+[](./image.png)
+
+
