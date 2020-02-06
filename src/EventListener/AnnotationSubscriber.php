@@ -1,7 +1,8 @@
 <?php
 
-namespace Polidog\HypermediaBundle\EventListener;
+declare(strict_types=1);
 
+namespace Polidog\HypermediaBundle\EventListener;
 
 use Doctrine\Common\Annotations\Reader;
 use Polidog\HypermediaBundle\Annotations\HyperMediaAnnotation;
@@ -21,10 +22,6 @@ class AnnotationSubscriber implements EventSubscriberInterface
      */
     private $halContentType;
 
-    /**
-     * @param Reader $annotationReader
-     * @param bool $halContentType
-     */
     public function __construct(Reader $annotationReader, bool $halContentType)
     {
         $this->annotationReader = $annotationReader;
@@ -32,14 +29,12 @@ class AnnotationSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param FilterControllerEvent $event
-     *
      * @throws \ReflectionException
      */
     public function onKernelController(FilterControllerEvent $event): void
     {
         $request = $event->getRequest();
-        if ($this->halContentType && $request->getContentType() !== 'application/hal+json') {
+        if ($this->halContentType && 'application/hal+json' !== $request->getContentType()) {
             return;
         }
 
@@ -59,7 +54,7 @@ class AnnotationSubscriber implements EventSubscriberInterface
         $request->attributes->set('_hypermedia_annotations', $annotations);
     }
 
-    private function filterAnnotations(array $annotations) :array
+    private function filterAnnotations(array $annotations): array
     {
         return array_filter($annotations, static function ($annotation) {
             if ($annotation instanceof HyperMediaAnnotation) {
@@ -68,11 +63,10 @@ class AnnotationSubscriber implements EventSubscriberInterface
         });
     }
 
-    public static function getSubscribedEvents() :array
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::CONTROLLER => ['onKernelController', 40],
         ];
     }
-
 }

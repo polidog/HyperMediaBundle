@@ -1,13 +1,19 @@
 services:
 
   Polidog\HypermediaBundle\EmbedRequestExecutor:
-    arguments:
-      $kernel: '@http_kernel'
+      arguments:
+          $kernel: '@http_kernel'
+
+  Polidog\HypermediaBundle\UrlGenerator:
+      arguments:
+          $router: '@router'
+          $enableFullPath: '%hypermedia.enable_absolute_url%'
 
   # Subscriber
   Polidog\HypermediaBundle\EventListener\ViewListenerSubscriber:
       arguments:
           $embedRequestExecutor: '@Polidog\HypermediaBundle\EmbedRequestExecutor'
+          $urlGenerator: '@Polidog\HypermediaBundle\UrlGenerator'
       tags:
           - { name: kernel.event_subscriber }
 

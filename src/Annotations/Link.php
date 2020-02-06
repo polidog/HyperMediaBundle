@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Polidog\HypermediaBundle\Annotations;
 
 use Doctrine\Common\Annotations\Annotation\Target;
+use Polidog\HyperMediaBundle\UrlGenerator;
 
 /**
  * @Annotation
- * @Target({"METHOD","CLASS"})
+ * @Target({"METHOD", "CLASS"})
  */
 class Link implements HyperMediaAnnotation
 {
@@ -21,11 +24,13 @@ class Link implements HyperMediaAnnotation
     private $href;
 
     /**
-     * @param array $params
+     * @var string
      */
+    private $name;
+
     public function __construct(array $params)
     {
-        foreach (['rel', 'href'] as $target) {
+        foreach (['rel', 'name', 'href'] as $target) {
             if (isset($params[$target])) {
                 $this->$target = $params[$target];
             }
@@ -40,25 +45,13 @@ class Link implements HyperMediaAnnotation
         return $this->rel;
     }
 
-    /**
-     * @return string
-     */
-    public function href(array $parameters)
+    public function href(UrlGenerator $generator, array $parameters): string
     {
-        $srcArray = explode('/', $this->href);
-        $urls = [];
-        foreach($srcArray as $target) {
-            if (preg_match('/\{(.+)\}/', $target, $matches)) {
-                if (isset($parameters[$matches[1]])) {
-                    $urls[] = $parameters[$matches[1]];
-                } else {
-                    $urls[] =$target;
-                }
-            } else {
-                $urls[] = $target;
-            }
+        if (null !== $this->name) {
+            return $generator->nameResolve($this->name, $parameters);
         }
-        return implode('/', $urls);
+        if (null !== $this->href) {
+            return $generator->pathResolve($this->href, $parameters);
+        }
     }
-
 }

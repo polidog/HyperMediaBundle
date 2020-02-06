@@ -1,9 +1,9 @@
 <?php
 
-namespace Polidog\HypermediaBundle\Annotations;
+declare(strict_types=1);
 
+namespace Polidog\HypermediaBundle\Annotations;
 
 interface HyperMediaAnnotation
 {
-
 }

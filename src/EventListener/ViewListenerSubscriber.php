@@ -1,11 +1,13 @@
 <?php
 
-namespace Polidog\HypermediaBundle\EventListener;
+declare(strict_types=1);
 
+namespace Polidog\HypermediaBundle\EventListener;
 
 use Polidog\HypermediaBundle\Annotations\Embed;
 use Polidog\HypermediaBundle\Annotations\Link;
 use Polidog\HypermediaBundle\EmbedRequestExecutor;
+use Polidog\HyperMediaBundle\UrlGenerator;
 use Polidog\SimpleApiBundle\Event\ViewParameterEvent;
 use Polidog\SimpleApiBundle\Events;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -19,14 +21,17 @@ class ViewListenerSubscriber implements EventSubscriberInterface
     private $embedRequestExecutor;
 
     /**
-     * @param EmbedRequestExecutor $embedRequestExecutor
+     * @var UrlGenerator
      */
-    public function __construct(EmbedRequestExecutor $embedRequestExecutor)
+    private $urlGenerator;
+
+    public function __construct(EmbedRequestExecutor $embedRequestExecutor, UrlGenerator $urlGenerator)
     {
         $this->embedRequestExecutor = $embedRequestExecutor;
+        $this->urlGenerator = $urlGenerator;
     }
 
-    public function onViewParameters(ViewParameterEvent $event) :void
+    public function onViewParameters(ViewParameterEvent $event): void
     {
         $request = $event->getRequest();
         $parameters = $event->getParameters();
@@ -36,28 +41,29 @@ class ViewListenerSubscriber implements EventSubscriberInterface
 
         foreach ($annotations as $annotation) {
             if ($annotation instanceof Embed) {
-                $parameters['_embedded'][$annotation->getRel()] = $this->embedRequestExecutor->execute($request, $annotation->src($request->attributes->all()));
+                $parameters['_embedded'][$annotation->getRel()] = $this->embedRequestExecutor->execute($request, $annotation->src($this->urlGenerator, $request->attributes->all()));
             }
             if ($annotation instanceof Link) {
-                $parameters['_link'][$annotation->getRel()] = $annotation->href($request->attributes->all());
+                $parameters['_link'][$annotation->getRel()] = $annotation->href($this->urlGenerator, $request->attributes->all());
             }
         }
 
         $event->setParameters($parameters);
     }
 
-    public static function getSubscribedEvents() :array
+    public static function getSubscribedEvents(): array
     {
         return [
-            Events::VIEW_PARAMETERS => 'onViewParameters'
+            Events::VIEW_PARAMETERS => 'onViewParameters',
         ];
     }
 
-    private function selfUri(Request $request) :string
+    private function selfUri(Request $request): string
     {
         if (null !== $qs = $request->getQueryString()) {
-            $qs = '?'.$qs;
+            $qs = '?' . $qs;
         }
-        return $request->getBaseUrl().$request->getPathInfo().$qs;
+
+        return $request->getBaseUrl() . $request->getPathInfo() . $qs;
     }
 }

@@ -1,0 +1,22 @@
+<?php
+
+$finder = PhpCsFixer\Finder::create()
+    ->in(__DIR__)
+    ->exclude('vendor');
+
+return PhpCsFixer\Config::create()
+    ->setRules([
+        '@Symfony' => true,
+        '@Symfony:risky' => true,
+        '@DoctrineAnnotation' => true,
+        '@PHP73Migration' => true,
+        '@PHPUnit75Migration:risky' => true,
+        'declare_strict_types' => true,
+        'array_syntax' => ['syntax' => 'short'],
+        'concat_space' => [
+            'spacing' => 'one',
+        ],
+        'single_line_throw' => false,
+    ])
+    ->setFinder($finder)
+    ->setRiskyAllowed(true);

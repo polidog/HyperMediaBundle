@@ -1,12 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Polidog\HypermediaBundle\Annotations;
 
 use Doctrine\Common\Annotations\Annotation\Target;
+use Polidog\HyperMediaBundle\Exception\SrcResolveException;
+use Polidog\HyperMediaBundle\UrlGenerator;
 
 /**
  * @Annotation
- * @Target({"METHOD","CLASS"})
+ * @Target({"METHOD", "CLASS"})
  */
 class Embed implements HyperMediaAnnotation
 {
@@ -21,43 +25,36 @@ class Embed implements HyperMediaAnnotation
     private $src;
 
     /**
-     * @param array $params
+     * @var string
      */
+    private $name;
+
     public function __construct(array $params)
     {
-        foreach (['rel', 'src'] as $target) {
+        foreach (['rel', 'name', 'src'] as $target) {
             if (isset($params[$target])) {
                 $this->$target = $params[$target];
             }
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getRel()
+    public function getRel(): string
     {
         return $this->rel;
     }
 
     /**
-     * @return string
+     * @throws SrcResolveException
      */
-    public function src(array $parameters = [])
+    public function src(UrlGenerator $generator, array $parameters = []): string
     {
-        $srcArray = explode('/', $this->src);
-        $urls = [];
-        foreach($srcArray as $target) {
-            if (preg_match('/\{(.+)\}/', $target, $matches)) {
-                if (isset($parameters[$matches[1]])) {
-                    $urls[] = $parameters[$matches[1]];
-                } else {
-                    $urls[] =$target;
-                }
-            } else {
-                $urls[] = $target;
-            }
+        if (null !== $this->name) {
+            return $generator->nameResolve($this->name, $parameters);
         }
-        return implode('/', $urls);
+        if (null !== $this->src) {
+            return $generator->pathResolve($this->src, $parameters);
+        }
+
+        throw new SrcResolveException('Name and src is null.');
     }
 }
