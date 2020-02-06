@@ -27,10 +27,6 @@ class ViewListenerSubscriber implements EventSubscriberInterface
 
     public function onViewParameters(ViewParameterEvent $event) :void
     {
-        if (false === $event->isMasterRequest()) {
-            return;
-        }
-
         $request = $event->getRequest();
         $parameters = $event->getParameters();
 
