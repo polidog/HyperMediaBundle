@@ -1,7 +1,7 @@
 # Polidog/HypermediaBundle
 
-Support HypermediaAPI for Symfony Framework, Supported only HAL.   
-And You mast need [polidog/simple-api-bundle](https://packagist.org/packages/polidog/simple-api-bundle)
+HypermediaAPI bundle.
+This bundle support only HAL json. And You mast need [polidog/simple-api-bundle](https://packagist.org/packages/polidog/simple-api-bundle)
 
 ## Installation
 
