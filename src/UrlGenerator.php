@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Polidog\HyperMediaBundle;
+namespace Polidog\HypermediaBundle;
 
 use Symfony\Component\Routing\RouterInterface;
 
