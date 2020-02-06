@@ -85,6 +85,6 @@ class DetailController
 }
 ```
 
-![](./image.png)
+![IMAGE](./image.png)
 
 
