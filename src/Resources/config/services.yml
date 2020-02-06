@@ -14,6 +14,6 @@ services:
   Polidog\HypermediaBundle\EventListener\AnnotationSubscriber:
       arguments:
           $annotationReader: '@annotation_reader'
-        $halContentType: '%hypermedia.hal_content_type%'
+          $halContentType: '%hypermedia.hal_content_type%'
       tags:
           - { name: kernel.event_subscriber }
