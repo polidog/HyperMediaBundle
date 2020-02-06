@@ -16,7 +16,7 @@ return [
 ...
 
 
-
+    Polidog\SimpleApiBundle\PolidogSimpleApiBundle::class => ['all' => true],
     Polidog\HypermediaBundle\HypermediaBundle::class => ['all' => true]
 ];
 
