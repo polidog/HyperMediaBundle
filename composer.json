@@ -1,0 +1,33 @@
+{
+    "name": "polidog/hypermedia-bundle",
+    "description": "Support Hal",
+    "type": "library",
+    "require": {
+        "php": "^7.1",
+        "ext-json": "*",
+        "symfony/http-kernel": "^3.4|^4.4",
+        "symfony/event-dispatcher": "^3.4|^4.4",
+        "symfony/dependency-injection": "^3.4|^4.4",
+        "doctrine/common": "^2.6",
+        "symfony/config": "^3.4|^4.4",
+        "symfony/http-foundation": "^3.4|^4.4",
+        "polidog/simple-api-bundle": "dev-feature/event"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "polidog",
+            "email": "polidogs@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Polidog\\HypermediaBundle\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Polidog\\HypermediaBundle\\Test\\": "tests/"
+        }
+    }
+}

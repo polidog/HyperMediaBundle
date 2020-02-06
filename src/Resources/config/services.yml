@@ -1,0 +1,19 @@
+services:
+
+  Polidog\HypermediaBundle\EmbedRequestExecutor:
+    arguments:
+      $kernel: '@http_kernel'
+
+  # Subscriber
+  Polidog\HypermediaBundle\EventListener\ViewListenerSubscriber:
+      arguments:
+          $embedRequestExecutor: '@Polidog\HypermediaBundle\EmbedRequestExecutor'
+      tags:
+          - { name: kernel.event_subscriber }
+
+  Polidog\HypermediaBundle\EventListener\AnnotationSubscriber:
+      arguments:
+          $annotationReader: '@annotation_reader'
+        $halContentType: '%hypermedia.hal_content_type%'
+      tags:
+          - { name: kernel.event_subscriber }
