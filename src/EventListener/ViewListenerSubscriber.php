@@ -36,14 +36,14 @@ class ViewListenerSubscriber implements EventSubscriberInterface
         $parameters = $event->getParameters();
 
         $annotations = $request->attributes->get('_hypermedia_annotations');
-        $parameters['_link']['self'] = $this->urlGenerator->selfResource($request);
+        $parameters['_links']['self'] = $this->urlGenerator->selfResource($request);
 
         foreach ($annotations as $annotation) {
             if ($annotation instanceof Embed) {
                 $parameters['_embedded'][$annotation->getRel()] = $this->embedRequestExecutor->execute($request, $annotation->src($this->urlGenerator, $request->attributes->all()));
             }
             if ($annotation instanceof Link) {
-                $parameters['_link'][$annotation->getRel()] = $annotation->href($this->urlGenerator, $request->attributes->all());
+                $parameters['_links'][$annotation->getRel()] = $annotation->href($this->urlGenerator, $request->attributes->all());
             }
         }
 
